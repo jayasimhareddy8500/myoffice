@@ -1,12 +1,28 @@
 package com.myoffice.controller;
 
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.myoffice.constant.AppConstant;
+import com.myoffice.dto.LoginRequestDto;
+import com.myoffice.dto.LoginResponseDto;
+import com.myoffice.dto.RegistrationRequestDto;
+import com.myoffice.dto.RegistrationResponceDto;
+import com.myoffice.exception.UserNotFoundException;
+import com.myoffice.service.EmployeeService;
+
+import lombok.extern.slf4j.Slf4j;
+
 /**
- * Get the employee activities such as create a new employee and approval
- * stage.
+ * Get the employee activities such as create a new employee and approval stage.
  * 
  * @author Goivndasamy.C
  * @since 15-02-2020
@@ -16,6 +32,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/employees")
 @CrossOrigin
+@Slf4j
 public class EmployeeController {
+	@Autowired
+	EmployeeService employeeService;
+
+	@PostMapping("/registration")
+	public ResponseEntity<RegistrationResponceDto> empRegistartion(
+			@Valid @RequestBody RegistrationRequestDto registrationRequestDto) {
+		log.info("check the empoyee registration");
+		RegistrationResponceDto empRegistartion = employeeService.empRegistartion(registrationRequestDto);
+		empRegistartion.setStatusCode(HttpStatus.OK.value());
+		empRegistartion.setMessage(AppConstant.SUCCESS_MESSAGE);
+		return new ResponseEntity<>(empRegistartion, HttpStatus.OK);
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponseDto> authenticateEmployee(@Valid @RequestBody LoginRequestDto loginRequestDto)
+			throws UserNotFoundException {
+		return ResponseEntity.ok().body(employeeService.authenticateEmployee(loginRequestDto));
+	}
 
 }
