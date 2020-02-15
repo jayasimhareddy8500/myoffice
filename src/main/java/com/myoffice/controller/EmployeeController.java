@@ -1,17 +1,22 @@
 package com.myoffice.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myoffice.constant.AppConstant;
+import com.myoffice.dto.ApprovalEmpDto;
+import com.myoffice.dto.ApprovalEmployeeResponseDto;
 import com.myoffice.dto.LoginRequestDto;
 import com.myoffice.dto.LoginResponseDto;
 import com.myoffice.dto.RegistrationRequestDto;
@@ -51,6 +56,19 @@ public class EmployeeController {
 	public ResponseEntity<LoginResponseDto> authenticateEmployee(@Valid @RequestBody LoginRequestDto loginRequestDto)
 			throws UserNotFoundException {
 		return ResponseEntity.ok().body(employeeService.authenticateEmployee(loginRequestDto));
+	}
+	
+	@GetMapping
+	public ResponseEntity<ApprovalEmployeeResponseDto> getAllApprovalEmployee(){
+		ApprovalEmployeeResponseDto approvalEmployeeResponseDto=new ApprovalEmployeeResponseDto();
+		
+		List<ApprovalEmpDto> allApprovalEmployee = employeeService.getAllApprovalEmployee();
+		approvalEmployeeResponseDto.setMessage(AppConstant.SUCCESS_MESSAGE);
+		approvalEmployeeResponseDto.setStatusCode(HttpStatus.OK.value());
+		approvalEmployeeResponseDto.setApprovalEmp(allApprovalEmployee);
+		return new ResponseEntity<>(approvalEmployeeResponseDto, HttpStatus.OK);
+		
+		
 	}
 
 }
