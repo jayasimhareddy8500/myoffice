@@ -1,6 +1,8 @@
 package com.myoffice.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.myoffice.constant.AppConstant;
+import com.myoffice.dto.ApprovalEmpDto;
 import com.myoffice.dto.LoginRequestDto;
 import com.myoffice.dto.LoginResponseDto;
 import com.myoffice.dto.RegistrationRequestDto;
@@ -67,6 +70,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 			log.error("UserServiceImpl authenticateUser ---> NotFoundException occured");
 			throw new UserNotFoundException(AppConstant.USER_NOT_FOUND);
 		}
+
+	}
+
+	@Override
+	public List<ApprovalEmpDto> getAllApprovalEmployee() {
+
+		List<Employee> allApprovalEmps = employeeRepository.findAll();
+		List<ApprovalEmpDto> collect = allApprovalEmps.stream().map(this::convertEmpEntityToDto)
+				.collect(Collectors.toList());
+
+		return collect;
+
+	}
+
+	private ApprovalEmpDto convertEmpEntityToDto(Employee allApprovalEmps) {
+		ApprovalEmpDto approvalEmpDto = new ApprovalEmpDto();
+		employee.setEmployeeName(allApprovalEmps.getEmployeeName());
+
+		employee.setEmployeeId(allApprovalEmps.getEmployeeId());
+		BeanUtils.copyProperties(employee, approvalEmpDto);
+
+		return approvalEmpDto;
 
 	}
 
